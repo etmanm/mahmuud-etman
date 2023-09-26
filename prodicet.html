@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>صيدلية دكتور محمود عتمان</title>
+    <link rel="stylesheet" type="text/css" href="css/nav.css">
+	<link rel="stylesheet" type="text/css" href="css/pro.css">
+  <link rel="icon" type="image/x-icon" href="photos/350620848_3236220350001692_7144019971356069922_n.jpg">
+	</style>
+</head>
+<body>
+  <header>
+    <nav>
+      
+      <ul>
+        <img class="logo" src="photos/350620848_3236220350001692_7144019971356069922_n.jpg">
+        <li><a href=index.html>الرئيسية</a></li>
+        <li><a href=prodicet.html>منتجاتنا</a></li>
+  
+        <a href="https://www.facebook.com/Dr.Mahmmoud.Mahmmoud?mibextid=ZbWKwL" target=_blank class="fab fa-facebook-f"><img src="photos/Facebook_Logo_(2019).png" width="50"></a>
+            <a href="https://wa.me/+201000224711" target=_blank class="fab fa-whatsapp"> <img src="photos/whlogo.png"width="50"></a> 
+      </ul>
+    </nav>
+  </header>
+	<div class="container">
+		<div class="products">
+		</div>
+		<div class="checkout">
+			<h2>تفاصيل التوصيل</h2>
+			<form>
+				<label for="phone">رقم الهاتف:</label>
+				<input type="tel" id="phone" name="phone" required>
+				<label for="address">العنوان:</label>
+				<input id="address" name="address" required></input>
+        <label for="cname">الاسم كاملا:</label>
+				<input id="cname" name="cname" required></input>
+			</form>
+			<h2>سلة المنتجات</h2>
+			<table>
+				<tr>
+					<th>اسم المنتج</th>
+					<th>السعر</th>
+					<th>الكمية</th>
+					<th>السعر الاجمالي</th>
+
+					
+				</tr>
+				<!-- عرض سلة المنتجات هنا -->
+			</table>
+			<button id="checkout-btn">تسجيل الطلب</button>
+		</div>
+	</div>
+
+</body>
+	<!-- Add Bootstrap 4 JS -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+	<script>
+		// Initialize Firebase
+var firebaseConfig = {
+  apiKey: "AIzaSyDiA33pSdYWkEmgVLJfnbxuPFZcbQW3LFE",
+  authDomain: "mahmuud-etman-parmacy.firebaseapp.com",
+  projectId: "mahmuud-etman-parmacy",
+  storageBucket: "mahmuud-etman-parmacy.appspot.com",
+  messagingSenderId: "325935139544",
+  appId: "1:325935139544:web:064ad4523474f0a689e5ad",
+  measurementId: "G-4G85ECPH3C"
+};
+firebase.initializeApp(firebaseConfig);
+
+var database = firebase.database();
+
+// عرض المنتجات
+var productsDiv = document.querySelector('.products');
+database.ref('products').once('value', function(snapshot) {
+	snapshot.forEach(function(childSnapshot) {
+		var childData = childSnapshot.val();
+		var productDiv = document.createElement('div');
+		productDiv.classList.add('product');
+		productDiv.innerHTML = `
+			<img src="${childData.image}">
+			<h2>${childData.name}</h2>
+			<p>${childData.price} جنيه</p>
+			<button class="add-to-cart" data-product-id="${childSnapshot.key}">أضف للسلة</button>
+		`;
+		productsDiv.appendChild(productDiv);
+	});
+});
+
+// إضافة المنتجات إلى السلة
+var cart = {};
+var cartTable = document.querySelector('.checkout table');
+productsDiv.addEventListener('click', function(event) {
+	if (event.target.classList.contains('add-to-cart')) {
+		var productId = event.target.getAttribute('data-product-id');
+		if (cart[productId]) {
+			cart[productId].quantity++;
+			cart[productId].totalPrice = cart[productId].quantity * cart[productId].price;
+			updateCartTable();
+		} else {
+			database.ref('products/' + productId).once('value', function(snapshot) {
+				var productData = snapshot.val();
+				productData.quantity = 1;
+				productData.totalPrice = productData.price;
+				cart[productId] = productData;
+				updateCartTable();
+			});
+		}
+	}
+});
+
+// تحديث سلة المنتجات
+function updateCartTable() {
+  cartTable.innerHTML = `
+    <tr>
+      <th>اسم المنتج</th>
+      <th>السعر</th>
+      <th>الكمية</th>
+      <th>سعر الكمية</th>
+      <th>حذف</th>
+    </tr>
+  `;
+  var totalPrice = 0;
+  Object.keys(cart).forEach(function(productId) {
+    var product = cart[productId];
+    var row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${product.name}</td>
+      <td>${product.price} جنيه</td>
+      <td>
+        <button class="increase-quantity" data-product-id="${productId}">+</button>
+        ${product.quantity}
+        <button class="decrease-quantity" data-product-id="${productId}">-</button>
+      </td>
+	  <td class="total-price" data-total-price="${product.totalPrice}">${product.totalPrice} جنيه</td>
+      <td><button class="remove-from-cart" data-product-id="${productId}">حذف</button></td>
+    `;
+    cartTable.appendChild(row);
+	database.ref('products/' + productId + '/totalPrice').set(product.totalPrice);
+totalPrice += product.totalPrice;
+  });
+  var totalRow = document.createElement('tr');
+  totalRow.innerHTML = `
+    <td colspan="4">السعر الإجمالي</td>
+    <td>${totalPrice} جنيه</td>
+  `;
+  cartTable.appendChild(totalRow);
+
+  // تحديث اسم الحقل
+  var priceFields = document.querySelectorAll('.total-price');
+  priceFields.forEach(function(field) {
+	field.textContent = field.dataset.totalPrice + ' جنيه';  });
+}
+// إزالة المنتجات من السلة
+cartTable.addEventListener('click', function(event) {
+  if (event.target.classList.contains('remove-from-cart')) {
+    var productId = event.target.getAttribute('data-product-id');
+    delete cart[productId];
+    updateCartTable();
+  } else if (event.target.classList.contains('increase-quantity')) {
+    var productId = event.target.getAttribute('data-product-id');
+    cart[productId].quantity++;
+    cart[productId].totalPrice = cart[productId].price * cart[productId].quantity;
+    updateCartTable();
+  } else if (event.target.classList.contains('decrease-quantity')) {
+    var productId = event.target.getAttribute('data-product-id');
+    if (cart[productId].quantity > 1) {
+      cart[productId].quantity--;
+      cart[productId].totalPrice = cart[productId].price * cart[productId].quantity;
+      updateCartTable();
+    }
+  }
+});
+
+// تسجيل الطلب
+var checkoutBtn = document.querySelector('#checkout-btn');
+checkoutBtn.addEventListener('click', function(event) {
+  event.preventDefault();
+  var phone = document.querySelector('#phone').value;
+  var address = document.querySelector('#address').value;
+  var cname = document.querySelector('#cname').value;
+  if (!phone || !address ||!cname) {
+    alert('يرجى إدخال رقم الهاتف والعنوان');
+  } else {
+    var totalPrice = 0;
+    Object.keys(cart).forEach(function(productId) {
+      totalPrice += cart[productId].totalPrice;
+    });
+    database.ref('orders').push({
+      phone: phone,
+      address: address,
+      cname: cname,
+      products: cart,
+      totalPrice: totalPrice
+    })
+	.then(function(result) {
+	            alert('تم تسجيل الطلب بنجاح');
+	            cart = {};
+	            updateCartTable();
+	            document.querySelector('#phone').value = '';
+	            document.querySelector('#address').value = '';
+	            document.querySelector('#name').value = '';
+	        })
+	        .catch(function(error) {
+	            alert('حدث خطأ أثناء تسجيل الطلب');
+	            console.log(error);
+    });
+  }
+});
+	</script>
+
+</html>

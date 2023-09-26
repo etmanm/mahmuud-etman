@@ -1,0 +1,39 @@
+header {
+	background-color: #90E0EF;
+	color: #fff;
+	padding: 20px;
+	position: relative;
+}
+
+
+
+nav li {
+	float: right;
+	text-align: center;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow:auto;
+	position:static;
+	text-align: center;
+}
+
+nav li a {
+	display: block;
+	color: #000000;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration:double;
+text-size-adjust: bold;
+}
+
+.header.share{
+    color:#fff;
+      border-bottom: .1rem solid #000000;
+      padding-bottom: .5rem;
+	  text-align: center;
+  }
+  .logo{
+	width: 50px;
+	text-align: left;
+  }
