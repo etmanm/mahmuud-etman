@@ -12,7 +12,7 @@ nav li {
 	text-align: center;
 	list-style-type: none;
 	margin: 0;
-	padding:0 px;
+	padding: 0;
 	overflow:auto;
 	position:static;
 	text-align: center;
@@ -29,11 +29,11 @@ text-size-adjust: bold;
 
 .header.share{
     color:#fff;
-      border-bottom: .1 rem solid #000000;
-      padding-bottom: .5 rem;
+      border-bottom: .1rem solid #000000;
+      padding-bottom: .5rem;
 	  text-align: center;
   }
   .logo{
-	width:50px;
-	text-align:left;
+	width: 50px;
+	text-align: left;
   }
