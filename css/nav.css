@@ -88,6 +88,5 @@ body {
 	  text-align: center;
   }
   .logo{
-	width: 50px;
-	text-align: left;
+	position: relative;z-index: 1;
   }
