@@ -12,7 +12,7 @@ nav li {
 	text-align: center;
 	list-style-type: none;
 	margin: 0;
-	padding:4 px;
+	padding:0 px;
 	overflow:auto;
 	position:static;
 	text-align: center;
@@ -22,7 +22,7 @@ nav li a {
 	display: block;
 	color: #000000;
 	text-align: center;
-	padding: 14 px 16 px;
+	padding: 14px 16px;
 	text-decoration:double;
 text-size-adjust: bold;
 }
