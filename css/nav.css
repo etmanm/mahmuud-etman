@@ -85,7 +85,7 @@ body {
     color:#fff;
       border-bottom: .1rem solid #000000;
       padding-bottom: .5rem;
-	  text-align: center;
+	  float: right;
   }
   .logo{
 	position: relative;z-index: 1;
